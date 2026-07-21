@@ -13,7 +13,7 @@
   "brightness": 1.0,
   "display_mirror_x": true,
   "touch_mirror_x": false,
-  "show_ground_aircraft": true,
+  "show_ground_aircraft": false,
   "auto_update": true,
   "update_repository": "clarkey1993/plane-radar-ota",
   "update_channel": "stable"

@@ -21,7 +21,7 @@ class RadarConfig:
     brightness: float = 1.0
     display_mirror_x: bool = True
     touch_mirror_x: bool = False
-    show_ground_aircraft: bool = True
+    show_ground_aircraft: bool = False
     auto_update: bool = True
     update_repository: str = "clarkey1993/plane-radar-ota"
     update_channel: str = "stable"

@@ -27,6 +27,12 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     config = RadarConfig.load(args.config)
+    if config.show_ground_aircraft:
+        # Version 2.2.1 removes ground/surface plots from the product display.
+        # Persist the migration so older installed configurations do not keep
+        # re-enabling the white ground targets after an OTA update.
+        config.show_ground_aircraft = False
+        config.save(args.config)
     store = AircraftStore(
         config.latitude,
         config.longitude,

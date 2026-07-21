@@ -57,7 +57,8 @@ ranges reveals already accumulated aircraft trails immediately.
 
 Aircraft markers and trails use a continuous ADS-B altitude colour scale from
 orange at low altitude through green, cyan, blue, and magenta at 40,000 ft.
-Aircraft reporting ground/0 ft are white.
+Ground/0-ft aircraft, towers, vehicles, and other surface targets are filtered
+from the radar.
 
 ## Touchscreen Wi-Fi setup
 

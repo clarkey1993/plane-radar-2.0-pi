@@ -6,6 +6,9 @@ from plane_radar.models import AircraftStore
 
 
 class FetcherTests(unittest.TestCase):
+    def test_ground_aircraft_are_disabled_by_default(self):
+        self.assertFalse(RadarConfig().show_ground_aircraft)
+
     def test_tracking_radius_does_not_shrink_with_display_range(self):
         config = RadarConfig(range_km=10, tracking_range_km=100)
         store = AircraftStore(config.latitude, config.longitude, 600, 90)
