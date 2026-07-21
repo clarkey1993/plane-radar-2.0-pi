@@ -1,0 +1,24 @@
+name: Test Raspberry Pi application
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install test dependencies
+        run: pip install pillow numpy
+      - name: Run tests
+        run: PYTHONPATH=pi python -m unittest discover -s pi/tests -v
+      - name: Compile application
+        run: PYTHONPATH=pi python -m compileall -q pi/plane_radar

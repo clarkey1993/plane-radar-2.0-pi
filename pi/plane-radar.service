@@ -1,0 +1,15 @@
+[Unit]
+Description=Plane Radar
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/plane-radar/current
+ExecStart=/usr/bin/python3 -m plane_radar --config /etc/plane-radar/config.json
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

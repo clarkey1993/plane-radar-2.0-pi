@@ -1,0 +1,20 @@
+{
+  "latitude": 0.0,
+  "longitude": 0.0,
+  "range_km": 50,
+  "range_options_km": [10, 25, 50, 100],
+  "tracking_range_km": 100,
+  "fetch_interval_seconds": 15,
+  "history_minutes": 12,
+  "stale_after_seconds": 90,
+  "sweep_seconds": 8,
+  "frames_per_second": 8,
+  "spi_hz": 40000000,
+  "brightness": 1.0,
+  "display_mirror_x": true,
+  "touch_mirror_x": false,
+  "show_ground_aircraft": true,
+  "auto_update": true,
+  "update_repository": "clarkey1993/plane-radar-ota",
+  "update_channel": "stable"
+}

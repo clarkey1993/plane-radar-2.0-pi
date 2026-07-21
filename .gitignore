@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+pi/config.json
+pi/plane-radar-preview.png

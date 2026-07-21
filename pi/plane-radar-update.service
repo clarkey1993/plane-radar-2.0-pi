@@ -1,0 +1,10 @@
+[Unit]
+Description=Check for verified Plane Radar updates
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/plane-radar/current
+ExecStart=/usr/bin/python3 -m plane_radar.updater --config /etc/plane-radar/config.json --install-root /opt/plane-radar
