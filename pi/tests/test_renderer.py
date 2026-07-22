@@ -34,6 +34,37 @@ class RendererTests(unittest.TestCase):
         self.assertEqual(east[0], (109, 100))
         self.assertGreater(max(point[0] for point in north) - min(point[0] for point in north), 10)
 
+    def test_selected_aircraft_renders_enriched_route(self):
+        config = RadarConfig(latitude=51.47, longitude=-0.46, range_km=25)
+        store = AircraftStore(config.latitude, config.longitude, 600, 90)
+        store.update(
+            {
+                "ac": [
+                    {
+                        "hex": "4081bb",
+                        "flight": "BAW577",
+                        "r": "G-TNEF",
+                        "t": "A21N",
+                        "desc": "AIRBUS A321NEO",
+                        "lat": 51.48,
+                        "lon": -0.53,
+                        "alt_baro": 425,
+                        "gs": 119,
+                    }
+                ]
+            }
+        )
+        store.set_route("BAW577", "LIN", "LHR", "Milan", "London")
+        renderer = RadarRenderer(config)
+        image = renderer.render(store.snapshot(config.range_km), store, monotonic_now=0)
+        route_area = image.crop((8, 412, 225, 432))
+        route_pixels = {
+            route_area.getpixel((x, y))
+            for y in range(route_area.height)
+            for x in range(route_area.width)
+        }
+        self.assertIn((95, 220, 185), route_pixels)
+
     def test_wifi_menu_opens_keyboard_for_secured_network(self):
         renderer = RadarRenderer(RadarConfig())
         renderer.wifi_snapshot = WifiSnapshot(

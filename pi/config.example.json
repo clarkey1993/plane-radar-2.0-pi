@@ -14,6 +14,9 @@
   "display_mirror_x": true,
   "touch_mirror_x": false,
   "show_ground_aircraft": false,
+  "route_lookup_enabled": true,
+  "route_cache_path": "/var/lib/plane-radar/routes.json",
+  "route_cache_hours": 6.0,
   "auto_update": true,
   "update_repository": "clarkey1993/plane-radar-ota",
   "update_channel": "stable"

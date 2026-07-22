@@ -22,6 +22,9 @@ class RadarConfig:
     display_mirror_x: bool = True
     touch_mirror_x: bool = False
     show_ground_aircraft: bool = False
+    route_lookup_enabled: bool = True
+    route_cache_path: str = "/var/lib/plane-radar/routes.json"
+    route_cache_hours: float = 6.0
     auto_update: bool = True
     update_repository: str = "clarkey1993/plane-radar-ota"
     update_channel: str = "stable"
