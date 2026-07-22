@@ -11,6 +11,7 @@ from .config import RadarConfig
 from .hardware import FT6336Touch, ST7796Display
 from .models import AircraftStore
 from .renderer import RadarRenderer
+from .routes import RouteEnricher
 from .wifi import WifiManager
 
 
@@ -43,6 +44,15 @@ def main(argv: list[str] | None = None) -> int:
     wifi = None if args.headless else WifiManager()
     fetcher = AircraftFetcher(config, store, wifi.is_connected if wifi else None)
     fetcher.start()
+    route_enricher = None
+    if config.route_lookup_enabled:
+        route_enricher = RouteEnricher(
+            store,
+            config.route_cache_path,
+            config.route_cache_hours,
+            wifi.is_connected if wifi else None,
+        )
+        route_enricher.start()
     display = None if args.headless else ST7796Display(
         config.spi_hz,
         config.brightness,
@@ -107,6 +117,9 @@ def main(argv: list[str] | None = None) -> int:
             elapsed = time.monotonic() - started
             time.sleep(max(0.0, frame_interval - elapsed))
     finally:
+        if route_enricher:
+            route_enricher.stop()
+            route_enricher.join(timeout=2)
         fetcher.stop()
         fetcher.join(timeout=2)
         if touch:

@@ -59,6 +59,11 @@ class Aircraft:
     distance_km: float
     bearing_deg: float
     last_seen: float
+    route_origin: str = ""
+    route_destination: str = ""
+    route_origin_city: str = ""
+    route_destination_city: str = ""
+    route_status: str = "pending"
     history: deque[Position] = field(default_factory=lambda: deque(maxlen=80))
 
     @property
@@ -128,6 +133,7 @@ class AircraftStore:
                 speed = int(round(_number(row.get("gs", row.get("tas", row.get("ias", 0))))))
                 track = _number(row.get("track", row.get("true_heading", row.get("mag_heading", bearing))), bearing)
                 vertical_rate = int(round(_number(row.get("baro_rate", row.get("geom_rate", 0)))))
+                same_flight = bool(current and current.callsign == callsign)
                 self._aircraft[icao] = Aircraft(
                     icao=icao,
                     callsign=callsign,
@@ -149,6 +155,11 @@ class AircraftStore:
                     distance_km=distance,
                     bearing_deg=bearing,
                     last_seen=now,
+                    route_origin=current.route_origin if same_flight else "",
+                    route_destination=current.route_destination if same_flight else "",
+                    route_origin_city=current.route_origin_city if same_flight else "",
+                    route_destination_city=current.route_destination_city if same_flight else "",
+                    route_status=current.route_status if same_flight else ("pending" if callsign else "unavailable"),
                     history=history,
                 )
             expired = [key for key, plane in self._aircraft.items() if now - plane.last_seen > self.stale_seconds]
@@ -174,6 +185,34 @@ class AircraftStore:
             self._aircraft.clear()
             self.last_update = 0.0
             self.last_error = "Updating radar location"
+
+    def route_candidates(self) -> list[str]:
+        with self._lock:
+            return list(
+                dict.fromkeys(
+                    plane.callsign
+                    for plane in self._aircraft.values()
+                    if plane.callsign and plane.route_status == "pending"
+                )
+            )
+
+    def set_route(
+        self,
+        callsign: str,
+        origin: str = "",
+        destination: str = "",
+        origin_city: str = "",
+        destination_city: str = "",
+        status: str = "available",
+    ) -> None:
+        with self._lock:
+            for plane in self._aircraft.values():
+                if plane.callsign == callsign:
+                    plane.route_origin = origin
+                    plane.route_destination = destination
+                    plane.route_origin_city = origin_city
+                    plane.route_destination_city = destination_city
+                    plane.route_status = status
 
     def snapshot(self, range_km: float) -> list[Aircraft]:
         with self._lock:

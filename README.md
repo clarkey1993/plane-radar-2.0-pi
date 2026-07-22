@@ -8,6 +8,8 @@ Features include:
 - animated radar sweep and persistent aircraft trails
 - altitude-coloured, direction-aware aircraft silhouettes
 - selectable aircraft with live flight information
+- cached estimated origin/destination enrichment from the hourly CC0
+  ADSB.lol VRS standing-data files
 - touchscreen range, trail, sweep, brightness, Wi-Fi, and location settings
 - verified over-the-air updates from the public
   [`plane-radar-ota`](https://github.com/clarkey1993/plane-radar-ota) repository
@@ -39,3 +41,6 @@ device families cannot install each other's assets.
 The current Airplanes.live source is documented for non-commercial use.
 Commercial distribution requires permission or a suitably licensed/local data
 provider.
+
+Route estimates are looked up once per new callsign, cached locally, and never
+interrupt live aircraft updates if the route service is unavailable.

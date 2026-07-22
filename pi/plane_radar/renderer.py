@@ -465,13 +465,32 @@ class RadarRenderer:
                 identity_parts.append("MIL")
             draw.text((11, 391), "  ·  ".join(identity_parts), font=self.small, fill=(95, 170, 175))
             description = selected.description or selected.source_type.replace("_", " ").upper() or "AIRCRAFT DATA"
-            draw.text((11, 405), description[:38], font=self.body, fill=(185, 210, 210))
+            draw.text((11, 403), description[:46], font=self.small, fill=(185, 210, 210))
+
+            if selected.route_origin and selected.route_destination:
+                route_text = f"~{selected.route_origin} → {selected.route_destination}"
+                draw.text((11, 415), route_text, font=self.metric, fill=(95, 220, 185))
+                cities = " to ".join(
+                    part for part in (selected.route_origin_city, selected.route_destination_city) if part
+                )
+                if cities:
+                    city_x = int(18 + draw.textlength(route_text, font=self.metric))
+                    available_width = max(0, 310 - city_x)
+                    city_text = cities
+                    while city_text and draw.textlength(city_text, font=self.small) > available_width:
+                        city_text = city_text[:-1]
+                    if city_text != cities and len(city_text) > 1:
+                        city_text = city_text[:-1] + "…"
+                    draw.text((city_x, 419), city_text, font=self.small, fill=(115, 160, 165))
+            else:
+                route_text = "finding route…" if selected.route_status == "pending" else "route unavailable"
+                draw.text((11, 419), route_text, font=self.small, fill=(80, 125, 130))
 
             trend = "↑" if selected.vertical_rate_fpm > 200 else "↓" if selected.vertical_rate_fpm < -200 else "→"
             altitude_text = "GROUND" if selected.altitude_ft <= 0 else f"{selected.altitude_ft:,} ft {trend}"
-            draw.text((11, 422), altitude_text, font=self.metric, fill=altitude_color(selected.altitude_ft))
-            draw.text((142, 422), f"{selected.speed_kt} kt", font=self.metric, fill=(115, 220, 255))
-            draw.text((229, 422), f"{selected.distance_km:.1f} km", font=self.body_bold, fill=(210, 195, 125))
+            draw.text((11, 435), altitude_text, font=self.metric, fill=altitude_color(selected.altitude_ft))
+            draw.text((142, 435), f"{selected.speed_kt} kt", font=self.metric, fill=(115, 220, 255))
+            draw.text((229, 435), f"{selected.distance_km:.1f} km", font=self.body_bold, fill=(210, 195, 125))
 
             age = int(selected.seen_seconds + max(0.0, now - selected.last_seen))
             if emergency:
@@ -481,7 +500,7 @@ class RadarRenderer:
                 rate = f"{selected.vertical_rate_fpm:+,} fpm" if abs(selected.vertical_rate_fpm) > 50 else "level"
                 footer = f"{rate}  ·  SQK {selected.squawk or '----'}  ·  {age}s"
                 footer_color = (115, 160, 165)
-            draw.text((11, 444), footer[:34], font=self.small, fill=footer_color)
+            draw.text((11, 458), footer[:34], font=self.small, fill=footer_color)
             draw.rounded_rectangle((238, 451, 310, 474), radius=5, outline=(30, 125, 115))
             draw.text((274, 456), "MENU", font=self.small, anchor="ma", fill=(95, 220, 185))
         else:
